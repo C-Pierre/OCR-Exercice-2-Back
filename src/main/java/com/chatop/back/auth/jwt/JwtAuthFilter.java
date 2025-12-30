@@ -1,16 +1,15 @@
-package com.chatop.back.auth.security;
+package com.chatop.back.auth.jwt;
 
 import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.*;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.Collections;
+import jakarta.servlet.http.*;
+import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.stereotype.Component;
+import org.springframework.security.authentication.*;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Component
 @RequiredArgsConstructor
@@ -38,14 +37,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = header.substring(7);
-        String username = jwtService.extractUsername(token);
+        try {
+            String token = header.substring(7);
+            String username = jwtService.extractUsername(token);
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+
+        } catch (ExpiredJwtException e) {
+            SecurityContextHolder.clearContext();
+        }
     }
 }

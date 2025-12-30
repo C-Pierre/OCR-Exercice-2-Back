@@ -15,7 +15,7 @@ public class OpenApiConfig {
                 .title("ChatOp API")
                 .version("1.0")
                 .description("Documentation de l'API ChatOp")
-                .license(new License().name("Apache 2.0").url("http://springdoc.org"))
+                .license(new License().name("Apache 2.0").url("https://springdoc.org"))
             );
     }
 }
