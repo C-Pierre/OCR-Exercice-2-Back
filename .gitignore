@@ -34,3 +34,6 @@ build/
 
 ### ENV SETTINGS
 src/main/resources/application.properties
+
+### FILES
+uploads/

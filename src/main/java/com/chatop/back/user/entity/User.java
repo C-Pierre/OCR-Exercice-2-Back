@@ -26,8 +26,9 @@ public class User {
     @Column(nullable=false)
     private String name;
 
-    @Column(nullable=false)
+    @Column(nullable=false, name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

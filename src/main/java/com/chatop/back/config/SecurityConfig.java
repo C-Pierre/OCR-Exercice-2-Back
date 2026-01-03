@@ -1,9 +1,9 @@
-package com.chatop.back.auth.security;
+package com.chatop.back.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import com.chatop.back.auth.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,17 +17,16 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         http
             .cors(cors -> {})
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
-                    "/auth/register",
-                    "/auth/login",
-                    "/v3/api-docs",
+                    "/api/auth/register",
+                    "/api/auth/login",
                     "/v3/api-docs/**",
                     "/swagger-ui/**"
                 ).permitAll()

@@ -1,4 +1,4 @@
-package com.chatop.back.auth.request;
+package com.chatop.back.user.request;
 
 import lombok.*;
 
@@ -7,8 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RegisterRequest {
+public class UpdateUserRequest {
     private String name;
     private String email;
-    private String password;
 }
