@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.stereotype.Component;
 import org.springframework.security.authentication.*;
@@ -19,12 +20,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
         String path = request.getServletPath();
+
         if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
             filterChain.doFilter(request, response);
             return;
@@ -39,10 +41,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             String token = header.substring(7);
+
             String username = jwtService.extractUsername(token);
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -50,6 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         } catch (ExpiredJwtException e) {
             SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }
