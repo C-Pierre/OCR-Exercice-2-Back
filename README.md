@@ -103,9 +103,9 @@ Il est possible de le vérifier depuis les logs du fait de la présence de `logg
           - `JwtAuthFilter` : filtre sur les requêtes HTTP pour vérifier le token
           - `JwtService` : service responsable de la lecture et création du token
         - request/
-          - `LoginRequest` et `RegisterRequest.java` : interfaces pour les requêtes
+          - `LoginRequest` et `RegisterRequest.java` : DTO pour les requêtes
         - response/
-          - `AuthResponse` : interface pour les réponses
+          - `AuthResponse` : DTO pour les réponses
         - security/
           - `SecurityBeans` : configuration pour l'encodage du mot de passe
         - service/
@@ -125,10 +125,10 @@ Il est possible de le vérifier depuis les logs du fait de la présence de `logg
         - repository/
           - `MessageRepository` : le repository des messages
         - request/
-          - `CreateMessageRequest` : l'interface pour la création d'un message
+          - `CreateMessageRequest` : DTO pour la création d'un message
         - response/
-          - `MessageResponse` : l'interface pour la réponse d'un message
-          - `MessagesResponse` : l'interface pour la réponse des messages
+          - `MessageResponse` : DTO pour la réponse d'un message
+          - `MessagesResponse` : DTO pour la réponse des messages
         - service/
           - `MessageService` : service pour la gestion des messages
         - validator/
@@ -141,11 +141,11 @@ Il est possible de le vérifier depuis les logs du fait de la présence de `logg
         - repository/
           - `RentalRepository` : le repository des locations
         - request/
-          - `CreateRentalRequest` : l'interface pour la création d'une location
-          - `UpdateRentalRequest` : l'interface pour l'édition d'une location
+          - `CreateRentalRequest` : DTO pour la création d'une location
+          - `UpdateRentalRequest` : DTO pour l'édition d'une location
         - response/
-          - `RentalResponse` : l'interface pour la réponse d'une location
-          - `RentalsResponse` : l'interface pour la réponse des locations
+          - `RentalResponse` : DTO pour la réponse d'une location
+          - `RentalsResponse` : DTO pour la réponse des locations
         - service/
           - `RentalService` : service pour la gestion des locations
           - `RentalPictureService` : service pour la gestion des images des locations
@@ -160,11 +160,11 @@ Il est possible de le vérifier depuis les logs du fait de la présence de `logg
         - repository/
           - `UserRepository` : le repository des utilisateurs
         - request/
-          - `CreateUserRequest` : l'interface pour la création d'un user
-          - `UpdateUserRequest` : l'interface pour l'édition d'un user
+          - `CreateUserRequest` : DTO pour la création d'un user
+          - `UpdateUserRequest` : DTO pour l'édition d'un user
         - response/
-          - `UserResponse` : l'interface pour la réponse d'un utilisateur
-          - `UsersResponse` : l'interface pour la réponse des utilisateurs
+          - `UserResponse` : DTO pour la réponse d'un utilisateur
+          - `UsersResponse` : DTO pour la réponse des utilisateurs
         - service/
           - `UserService` : service pour la gestion des utilisateurs
         - validator/
