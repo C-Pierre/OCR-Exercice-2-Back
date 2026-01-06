@@ -2,6 +2,9 @@
 
 ## Initialisation et lancement des applications
 
+Il faut récupérer au préalable le dépôt Git de la partie front-end pour utiliser la web-app :
+-   https://github.com/C-Pierre/OCR-Exercice-2
+
 ### Base de données
 
 Lancer les commandes suivantes pour créer la DB et ses tables via le script fournit :
@@ -20,6 +23,7 @@ Créer le fichier `./src/main/resources/application.properties` avec les éléme
 -     spring.application.name=back
       spring.jpa.hibernate.ddl-auto=update
       spring.jpa.show-sql=true
+      logging.level.org.springframework.cache=TRACE
       spring.datasource.url=jdbc:mysql://localhost:3306/chatop_db?useSSL=false&serverTimezone=UTC
       spring.datasource.username=DB_USERNAME
       spring.datasource.password=DB_PASSWORD
@@ -54,6 +58,38 @@ Une documentation a été mise en place avec OpenApi.
 Celle-ci est accessible sur les endpoints suivants :
 - http://localhost:3001/swagger-ui/index.html
 - http://localhost:3001/v3/api-docs
+
+
+## Fonctionnement
+
+### Authentification
+La quasi-totalité des routes nécessite d'être authentifié.
+
+Depuis Postman ou équivalent, après le login et la récupération du token, il faut que celui-ci soit joint au `Header`, au niveau de l'`Authorization`, et ce pour chaque requête :
+-     Authorization : bearer monSuperTokenBienLongJusteIci
+
+Le token est valide durant 24 heures.
+
+### Body
+Pour les requêtes POST et PUT des Rentals, le body doit être sous la forme d'un `Content-Type : multi-part/form-data`.
+
+Les autres requêtes POST et PUT ont un elles un body sous forme de JSON : `Content-type : application/json`.
+
+### Règles conditionnelles
+Les Messages d'un Rental ne peuvent être récupérés que par le Owner ou le User.
+
+Un Rental ne peut être modifié ou supprimé que par son Owner.
+
+Un User ne peut être modifié ou supprimé que par le User lui-même.
+
+## Développement
+
+L'API a été réalisée en Java 17, Spring 4 et Maven 3.
+
+La documentation OpenAPI 3 est générée via les annotations placées dans les controllers.
+
+Un système de cache a été mis en place dans les différents services principaux (User, Rental, Message).
+Il est possible de le vérifier depuis les logs du fait de la présence de `logging.level.org.springframework.cache=TRACE` dans `application.properties`.
 
 ## Architecture de l'API
 
@@ -91,7 +127,8 @@ Celle-ci est accessible sur les endpoints suivants :
         - request/
           - `CreateMessageRequest` : l'interface pour la création d'un message
         - response/
-          - `MessageResponse` : l'interface pour la réponse des messages
+          - `MessageResponse` : l'interface pour la réponse d'un message
+          - `MessagesResponse` : l'interface pour la réponse des messages
         - service/
           - `MessageService` : service pour la gestion des messages
         - validator/
@@ -107,7 +144,8 @@ Celle-ci est accessible sur les endpoints suivants :
           - `CreateRentalRequest` : l'interface pour la création d'une location
           - `UpdateRentalRequest` : l'interface pour l'édition d'une location
         - response/
-          - `RentalResponse` : l'interface pour la réponse des locations
+          - `RentalResponse` : l'interface pour la réponse d'une location
+          - `RentalsResponse` : l'interface pour la réponse des locations
         - service/
           - `RentalService` : service pour la gestion des locations
           - `RentalPictureService` : service pour la gestion des images des locations
@@ -121,8 +159,12 @@ Celle-ci est accessible sur les endpoints suivants :
           - `UserEntity` : l'entité des utilisateurs
         - repository/
           - `UserRepository` : le repository des utilisateurs
+        - request/
+          - `CreateUserRequest` : l'interface pour la création d'un user
+          - `UpdateUserRequest` : l'interface pour l'édition d'un user
         - response/
-          - `UserResponse` : l'interface pour la réponse des utilisateurs
+          - `UserResponse` : l'interface pour la réponse d'un utilisateur
+          - `UsersResponse` : l'interface pour la réponse des utilisateurs
         - service/
           - `UserService` : service pour la gestion des utilisateurs
         - validator/
@@ -133,14 +175,7 @@ Celle-ci est accessible sur les endpoints suivants :
   - uploads/
     - emplacement des fichiers / images importés sur le serveur (non versionné)
   - `pom.xml` : fichier responsable des imports de dépendances 
-
-## Développement
-
-L'API a été réalisée en Java 21 et Spring 4, avec Maven via l'IDE IntelliJ.
-
-La documentation OpenAPI 3 est générée via les annotations placées dans les controllers.
-
-Un système de cache a été mis en place dans les différents services principaux (User, Rental, Message).
+  - `script.sql` : le script pour créer la base de données du projet 
 
 ## Dépendances
 
@@ -150,7 +185,7 @@ Présentation des dépendances / librairies utilisées dans l'API.
 - `spring-boot-starter-data-jpa` :	Fournit JPA/Hibernate pour la gestion des entités, ORM et accès à la base de données.
 - `spring-boot-starter-security` : Ajoute Spring Security pour l’authentification et l’autorisation.
 - `spring-boot-starter-validation` : Permet l’utilisation des annotations de validation (@NotNull, @Size, etc.) via Jakarta Bean Validation.
-- `spring-boot-starter-webmvc` : Fournit les fonctionnalités Spring MVC pour créer des API REST et servir des pages web.
+- `spring-boot-starter-web` : Fournit les fonctionnalités Spring pour créer des API REST et servir des pages web.
 - `spring-boot-starter-cache` : Permet la mise en cache avec Spring (@Cacheable, @CacheEvict).
 
 ### Spring Boot Dev Tools

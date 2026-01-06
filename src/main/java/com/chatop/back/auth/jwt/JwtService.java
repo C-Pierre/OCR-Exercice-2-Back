@@ -16,22 +16,24 @@ public class JwtService {
     private String secret;
 
     public String extractUsername(String token) {
-        Claims claims = Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-
-        return claims.getSubject();
+        return extractAllClaims(token).getSubject();
     }
 
     public String generateToken(String subject) {
         return Jwts.builder()
             .setSubject(subject)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24h
-            .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+            .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+            .signWith(getSigningKey())
             .compact();
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
     }
 
     private SecretKey getSigningKey() {
