@@ -19,21 +19,19 @@ Le script `script.sql` a été copié à la racine de l'API. Il est toujours pr�
 
 ### API / Back-end
 
-Créer le fichier `./src/main/resources/application.properties` avec les éléments suivants :
--     spring.application.name=back
-      spring.jpa.hibernate.ddl-auto=update
-      spring.jpa.show-sql=true
-      logging.level.org.springframework.cache=TRACE
-      spring.datasource.url=jdbc:mysql://localhost:3306/chatop_db?useSSL=false&serverTimezone=UTC
-      spring.datasource.username=DB_USERNAME
-      spring.datasource.password=DB_PASSWORD
-      spring.servlet.multipart.enabled=true
-      spring.servlet.multipart.max-file-size=10MB
-      spring.servlet.multipart.max-request-size=10MB
-      app.jwt.secret=APP_SECRE_TKEY
-      app.uploads.path = uploads/
-      app.front.url = http://localhost:4200
-      server.port=3001
+Créer le fichier `.env` à la racine du projet avec les éléments suivants :
+-     DB_URL=jdbc:mysql://localhost:3306/chatop_db
+      DB_USERNAME=myUser
+      DB_PASSWORD=MotDePasse
+      SERVER_PORT=3001
+      APP_DOCUMENTATION_URI=/v3/api-docs
+      APP_SWAGGER_URI=/swagger-ui
+      APP_BASE_PATH=/api
+      APP_SECURITY_PUBLIC_PATHS=/api/auth/login,/api/auth/register,/swagger-ui/**,/v3/api-docs/**
+      APP_JWT_DURATION=86400000
+      APP_JWT_SECRET=mySecretTokenToGenerateAndProvide
+      APP_UPLOADS_PATH=uploads/
+      APP_FRONT_URL=http://localhost:4200
 
 Lancer ensuite l'application avec la commande :
 -     nvm spring-boot:run
@@ -58,7 +56,6 @@ Une documentation a été mise en place avec OpenApi.
 Celle-ci est accessible sur les endpoints suivants :
 - http://localhost:3001/swagger-ui/index.html
 - http://localhost:3001/v3/api-docs
-
 
 ## Fonctionnement
 
@@ -104,78 +101,109 @@ Il est possible de le vérifier depuis les logs du fait de la présence de `logg
           - `JwtService` : service responsable de la lecture et création du token
         - request/
           - `LoginRequest` et `RegisterRequest.java` : DTO pour les requêtes
-        - response/
-          - `AuthResponse` : DTO pour les réponses
+        - dto/
+          - `AuthDto` : DTO pour les réponses
         - security/
           - `SecurityBeans` : configuration pour l'encodage du mot de passe
         - service/
-          - `AuthService` : service pour la gestion de l'authentification
+          - `AuthLoginService` : service pour l'authentification
+          - `AuthRegisterService` : service pour la création d'un compte / User
+      - common/
+        - authorization/
+          - validator/
+            - `AuthorizationValidator`: validateur commun pour les permissions d'un User
+        - error/
+          - builder/
+            - `ErrorBuilder` : builder pour la réponse des erreurs
+          - response/
+            - `ErrorResponse` : DTO pour le format de réponse des erreurs
+          - exception/
+            - handler/
+              - `GlobalExceptionHandler` : gestion globale des exceptions de l'application
       - config/
         - `OpenApiConfig` : configuration de la documentation
         - `SecurityConfig` : configuration de la sécurité de l'application et du routing
         - `WebConfig` : configuration web / CORS
-      - exception/
-        - `ErrorResponse` : interface pour le format de réponse des erreurs
-        - `GlobalExceptionHandler` : gestion globale des exceptions de l'application
       - message/
         - controller/
           - `MessageController` : controller des messages
         - entity/
           - `MessageEntity` : l'entité des messages
+        - mapper/
+          - `MessageMapper` : mapper de l'entité vers le DTO
         - repository/
           - `MessageRepository` : le repository des messages
         - request/
           - `CreateMessageRequest` : DTO pour la création d'un message
-        - response/
-          - `MessageResponse` : DTO pour la réponse d'un message
-          - `MessagesResponse` : DTO pour la réponse des messages
+        - dto/
+          - `MessageDto` : DTO pour la réponse d'un message
+          - `MessagesDto` : DTO pour la réponse des messages
         - service/
-          - `MessageService` : service pour la gestion des messages
+          - `CreateMessageService` : service pour la création d'un message
+          - `DeleteMessageService` : service pour la suppression d'un message
+          - `UpdateMessageService` : service pour la modification d'un message
+          - `GetMessageService` : service pour la récupération d'un message
+          - `GetMessagesService` : service pour la récupération des messages
         - validator/
-          - `MessageValidator`: validateur pour les informations d'un message
+          - `MessageAuthorizationValidator`: validateur pour les permissions d'un User
       - rental/
         - controller/
           - `RentalController` : controller des locations
+        - dto/
+          - `RentalDto` : DTO pour la réponse d'une location
+          - `RentalsDto` : DTO pour la réponse des locations
         - entity/
           - `RentalEntity` : l'entité des locations
+        - mapper/
+          - `RentalMapper` : mapper de l'entité vers le DTO
         - repository/
           - `RentalRepository` : le repository des locations
         - request/
           - `CreateRentalRequest` : DTO pour la création d'une location
           - `UpdateRentalRequest` : DTO pour l'édition d'une location
-        - response/
-          - `RentalResponse` : DTO pour la réponse d'une location
-          - `RentalsResponse` : DTO pour la réponse des locations
         - service/
-          - `RentalService` : service pour la gestion des locations
-          - `RentalPictureService` : service pour la gestion des images des locations
-          - `RentalResponseService` : service pour la gestion des réponses liées aux locations
+          - picture/
+            - `EncodeRentalPictureService` : service pour l'encodage base64 d'une image de location
+            - `SaveRentalPictureService` : service pour la sauvegarde d'une image de location
+          - `CreateRentalService` : service pour la création d'une location
+          - `DeleteRentalService` : service pour la suppression d'une location
+          - `UpdateRentalService` : service pour la modification d'une location
+          - `GetRentalService` : service pour la récupération d'une location
+          - `GetRentalsService` : service pour la récupération des locations
         - validator/
-          - `RentalValidator`: validateur pour les informations d'une location
+          - `RentalAuthorizationValidator`: validateur pour les permissions d'un User
       - user/
         - controller/
           - `UserController` : controller des utilisateurs
         - entity/
           - `UserEntity` : l'entité des utilisateurs
+        - mapper/
+          - `UserMapper` : mapper de l'entité vers le DTO
         - repository/
           - `UserRepository` : le repository des utilisateurs
         - request/
           - `CreateUserRequest` : DTO pour la création d'un user
           - `UpdateUserRequest` : DTO pour l'édition d'un user
-        - response/
-          - `UserResponse` : DTO pour la réponse d'un utilisateur
-          - `UsersResponse` : DTO pour la réponse des utilisateurs
+        - dto/
+          - `UserDto` : DTO pour la réponse d'un utilisateur
+          - `UsersDto` : DTO pour la réponse des utilisateurs
         - service/
-          - `UserService` : service pour la gestion des utilisateurs
+          - `CeateUserService` : service pour la création d'un utilisateur
+          - `DeleteteUserService` : service pour la suppression d'un utilisateur
+          - `UpdateService` : service pour la modification d'un utilisateur
+          - `GetCurrentUserService` : service pour la récupération de l'utilisateur courant
+          - `GetUserService` : service pour la récupération d'un utilisateur
+          - `GetUsersService` : service pour la récupération des utilisateurs
         - validator/
-          - `UserValidator`: validateur pour les informations d'un utilisateur
+          - `UserAuthorizationValidator`: validateur pour les permissions d'un User
       - `BackApplication` : le fichier principal, en charge de l'exécution de l'application
     - main/resources/
-      - `application.properties` : les variables de l'application (non versionné)
+      - `application.properties` : les variables de l'application
   - uploads/
     - emplacement des fichiers / images importés sur le serveur (non versionné)
   - `pom.xml` : fichier responsable des imports de dépendances 
   - `script.sql` : le script pour créer la base de données du projet 
+  - `.env` : les variables d'environnement (non versionné)
 
 ## Dépendances
 
@@ -213,4 +241,7 @@ Présentation des dépendances / librairies utilisées dans l'API.
 
 ### Plugins Maven
 - `maven-compiler-plugin` : Configure le compilateur Java, et permet d’utiliser Lombok comme annotation processor.
-- `spring-boot-maven-plugin` : Permet de packager l’application Spring Boot en jar/war exécutable.
+- `spring-boot-maven-plugin` : Permet de packager l’application Spring Boot en jar/war exécutable
+
+### Dotenv
+- `dotenv-java` : Pour l'utilisation d'un fichier .env pour les variables d'environnement dans l'app.

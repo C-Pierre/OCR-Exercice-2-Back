@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import com.chatop.back.auth.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${app.security.public.paths}")
+    private String[] publicPaths;
+
     private final JwtAuthFilter jwtAuthFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
@@ -24,12 +28,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(
-                    "/api/auth/register",
-                    "/api/auth/login",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**"
-                ).permitAll()
+                .requestMatchers(publicPaths).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(

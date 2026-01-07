@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ### ENV SETTINGS
-src/main/resources/application.properties
+.env
 
 ### FILES
 uploads/

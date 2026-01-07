@@ -9,12 +9,19 @@ import org.jspecify.annotations.NonNull;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.stereotype.Component;
 import org.springframework.security.authentication.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Value("${app.documentation.uri}")
+    private String appDocumentationUri;
+
+    @Value("${app.swagger.uri}")
+    private String appSwaggerUri;
 
     private final JwtService jwtService;
 
@@ -27,7 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+        if (path.startsWith(appDocumentationUri) || path.startsWith(appSwaggerUri)) {
             filterChain.doFilter(request, response);
             return;
         }

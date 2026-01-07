@@ -15,6 +15,9 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String secret;
 
+    @Value("${app.jwt.duration}")
+    private String duration;
+
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
@@ -23,7 +26,7 @@ public class JwtService {
         return Jwts.builder()
             .setSubject(subject)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+            .setExpiration(new Date(System.currentTimeMillis() + duration))
             .signWith(getSigningKey())
             .compact();
     }
